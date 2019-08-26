@@ -1,5 +1,9 @@
+import 'QuizBrain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:flutter/material.dart';
 
+//we made an object quizbrain of the class Quizbrain so we can use it in main
+QuizBrain quizBrain = QuizBrain();
 void main() => runApp(Quizzler());
 
 class Quizzler extends StatelessWidget {
@@ -25,6 +29,49 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Icon> scoreKeeper = [];
+
+  void checkAnswer(bool userPicked) {
+    bool correctAnswer = quizBrain.getAnswer();
+    setState(() {
+      if (quizBrain.isFinished() == true) {
+        Alert(
+                context: context,
+                title: "FINISHED",
+                desc:
+                    "You have come to the end of the quiz, thanks for participating")
+            .show();
+        quizBrain.reset();
+        scoreKeeper = [];
+      } else {
+        if (userPicked == correctAnswer) {
+          scoreKeeper.add(Icon(Icons.check, color: Colors.green));
+        } else {
+          scoreKeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+        }
+
+        quizBrain.nextQuestion();
+      }
+    });
+  }
+//  List<String> questions=[
+//    'Cole is learning Flutter with Dart',
+//    'There are more developers compared to jobs',
+//    'Developers are more recognised than designers'
+//
+//  ];
+
+//  void updateQuestionNumber (){
+//    setState(() {
+//      questionNumber = Random().nextInt(3);
+//
+//    });
+//
+//  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +84,12 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                //this takes the  list of questions and gets the position of the
+                //[questionNumber] and displays the string which 'widget Text' expects
+                //from the constructor
+
+                //this is where we call the new class of questions quizbrain
+                quizBrain.getQuestion(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -61,6 +113,10 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
+                checkAnswer(true);
+
+                // ignore: unused_local_variable
+
                 //The user picked true.
               },
             ),
@@ -79,19 +135,15 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked false.
+                checkAnswer(false);
               },
             ),
           ),
         ),
-        //TODO: Add a Row here as your score keeper
+        Row(
+          children: scoreKeeper,
+        )
       ],
     );
   }
 }
-
-/*
-question1: 'You can lead a cow down stairs but not up stairs.', false,
-question2: 'Approximately one quarter of human bones are in the feet.', true,
-question3: 'A slug\'s blood is green.', true,
-*/
