@@ -42,7 +42,7 @@ class QuizBrain {
     return _questionSolution[_questionNumber].questionAnswer;
   }
   bool isFinished(){
-    if(_questionNumber >= _questionSolution.length){
+    if(_questionNumber == _questionSolution.length-1){
      return true;
     }
     else{
